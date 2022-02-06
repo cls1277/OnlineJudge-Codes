@@ -1,5 +1,3 @@
-**Hello , welcome to my code git.**
+**Hello , welcome to my onelinejudge-codes git.**
 
-~~As for more information , I will write it later.~~
-
-至于更多的废话，有时间再写/cy
+至于更多的废话，有时间再写 :smile:
