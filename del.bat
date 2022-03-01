@@ -6,6 +6,7 @@ del loj\*.exe
 del luogu\*.exe
 del poj\*.exe
 del uva\*.exe
-del temp\*.exe
+del temp\math\*.exe
+del temp\graph\*.exe
 echo Done...
 pause
