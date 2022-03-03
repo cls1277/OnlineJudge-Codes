@@ -1,3 +1,3 @@
-**Hello , welcome to my onelinejudge-codes git.**
+Welcome to my onlinejudge-codes.
 
-至于更多的废话，有时间再写 :smile:
+有时间再写废话 :smile:
