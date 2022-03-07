@@ -8,5 +8,6 @@ del poj\*.exe
 del uva\*.exe
 del temp\math\*.exe
 del temp\graph\*.exe
+del temp\ds\*.exe
 echo Done...
 pause
