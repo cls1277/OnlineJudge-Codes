@@ -13,7 +13,8 @@ typedef long long LL;
 
 const LL maxn = 105;
 LL n, m;
-string mp[maxn], b[maxn];
+// string mp[maxn], b[maxn];
+LL mp[maxn][maxn], b[maxn][maxn];
 struct Pair {
     LL a, b, c, d;
 };
@@ -28,42 +29,29 @@ int main() {
     while(t--) {
         vector<Pair>a;
         cin>>n>>m;
-        Fo(i,0,n-1) cin>>mp[i];
-        Fo(i,0,n-1)
-            Fo(j,0,m-1)
-                b[i][j] = '0';
-        bool flag = false;
         Fo(i,0,n-1) {
-            if(mp[i][0]=='1') {
-                if(m>1) {
-                    if(mp[i][1]=='1') {
-                        flag = true;
-                        break;
-                    }
-                }
-                if(i-1<0) {
-                    flag = true;
-                    break;
-                }
-                if(mp[i-1][1]!='1') {
-                    flag = true;
-                    break;
-                }
-                b[i][0] = b[i-1][1] = '1';
-                b[i-1][0] = b[i][1] = '0';
-                a.push_back({i,1,i+1,2});
+            string str; cin>>str;
+            Fo(j,0,str.length()-1) {
+                mp[i][j] = str[j]-'0';
+                b[i][j] = 0;
             }
         }
-        if(flag) {
+        if(mp[0][0]==1) {
             cout<<"-1"<<endl;
             continue;
         }
         Fo(i,0,n-1) {
             Ro(j,m-1,1) {
-                if(mp[i][j]=='1'&&b[i][j]=='0') {
+                if(mp[i][j]==1&&b[i][j]==0) {
                     a.push_back({i+1,j,i+1,j+1});
-                    b[i][j-1] = '0';
+                    b[i][j-1] = 0;
                 }
+            }
+        }
+        Ro(i,n-1,1) {
+            if(mp[i][0]==1&&b[i][0]==0) {
+                b[i-1][0] = 0;
+                a.push_back({i,1,i+1,1});
             }
         }
         cout<<a.size()<<endl;
