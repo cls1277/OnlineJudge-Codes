@@ -1,6 +1,8 @@
 //By cls1277
 #include<bits/stdc++.h>
-#include"geometry.h"
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/hash_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 typedef long long LL;
 #define INF 2147483647
@@ -13,15 +15,21 @@ typedef long long LL;
 #define endl '\n'
 
 // const LL maxn = ;
-
+// gp_hash_table<string, int> mp;
+cc_hash_table<string, int> mp;
+// unordered_map<string, int>mp;
+    
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     #ifdef DEBUG
     freopen("data.txt","r",stdin);
     #endif
-    P a;
-    cin>>a.x>>a.y;
-    cout<<a.x<<","<<a.y;
+    LL n; cin>>n;
+    Fo(i,1,n) {
+        string s; cin>>s;
+        mp[s] = 1;
+    }
+    cout<<mp.size();
     return 0;
 }
