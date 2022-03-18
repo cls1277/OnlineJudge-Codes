@@ -1,4 +1,4 @@
-//By cls1277 , learn from ECNU
+//By cls1277
 #include<unordered_map>
 #include<cstring>
 #include<queue>
