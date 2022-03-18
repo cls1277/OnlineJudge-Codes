@@ -43,12 +43,6 @@ int main() {
         double y; cin>>y;
         b[i][n+1]=y;
     }
-    // Fo(i,1,n+1) {
-    //     Fo(j,1,n+1)
-    //         cout<<b[i][j]<<" ";
-    //     cout<<endl;
-    // }
-    // cout<<"***"<<endl;
     Fo(q,1,n+1) {
         LL cnt=0; bool flag=true;
         Fo(i,1,n+1) {
@@ -58,12 +52,6 @@ int main() {
                 a[cnt][j] = b[i][j];
             }
         }
-        // Fo(i,1,n) {
-        //     Fo(j,1,n+1)
-        //         cout<<a[i][j]<<" ";
-        //     cout<<endl;
-        // }
-        // cout<<"---"<<endl;
         Fo(i,1,n) {
             LL maxrow=i;
             Fo(j,i+1,n)
@@ -84,30 +72,17 @@ int main() {
         }
         if(flag==false) continue;
         maxcnt=maxw=0;
-        // Fo(i,1,n) {
-        //     Fo(j,1,n+1)
-        //         cout<<a[i][j]<<" ";
-        //     cout<<endl;
-        // }
-        // cout<<"---"<<endl;
-        // cout<<n<<endl;
         Fo(i,1,n) {
             w[i]=a[i][n+1]/a[i][i];
             if((int)w[i]<w[i]) {
                 flag = false;
                 break;
             }
-            // cout<<w[i]<<" ";
             if(w[i]<=eps) {
                 flag = false;
                 break;
             }
             maxw=max(maxw,w[i]);
-            // vis[w[i]]++;
-            // // cout<<vis[w[i]]<<endl;
-            // if(vis[w[i]]>1) {
-            //     flag = false;
-            // }
         }
         Fo(i,1,n) {
             if(w[i]==maxw) {
@@ -118,15 +93,6 @@ int main() {
                 }
             }
         }
-        // cout<<"---"<<endl;
-        // Fo(i,1,n)
-            // cout<<w[i]<<" "<<vis[w[i]]<<endl;
-        // cout<<endl;
-        // cout<<vis[2]<<endl;
-        // cout<<"q:"<<q<<" flag:"<<flag<<endl;
-        // Fo(i,1,n)
-            // cout<<w[i]<<" ";
-        // cout<<endl;
         bool op = false;
         if(flag) {
             if(ans==false) {
@@ -156,72 +122,5 @@ int main() {
         if(res[i]>res[maxidx])
             maxidx = i;
     cout<<maxidx;
-    // Fo(i,1,n+1)
-    //     Fo(j,1,n+1)
-    //         temp[i][j]=a[i][j];
-    // Fo(q,1,n+1) {
-    //     Fo(i,1,n+1)
-    //         Fo(j,1,n+1)
-    //             a[i][j]=temp[i][j];
-    //     bool flag = false;
-    //     Fo(i,1,n+1) {
-    //         if(i==q) continue;
-    //         LL maxrow = i;
-    //         Fo(j,i+1,n+1) {
-    //             if(j==q) continue;
-    //             if(a[j][i]>a[maxrow][i])
-    //                 maxrow = j;
-    //         }
-    //         if(a[maxrow][i]==0) {
-    //             flag = true;
-    //             break;
-    //         }
-    //         Fo(j,1,n+1)
-    //             swap(a[i][j],a[maxrow][j]);
-    //         Fo(j,1,n+1) {
-    //             if(j==q||i==j) continue;
-    //             LL p=a[j][i]/a[i][i];
-    //             Fo(k,i+1,n+1)
-    //                 a[j][k]-=a[i][k]*p;
-    //         }
-    //     }
-    //     Fo(i,1,n+1) {
-    //         if(i==q) continue;
-    //         Fo(j,1,n+1)
-    //             cout<<a[i][j]<<" ";
-    //         cout<<endl;
-    //     }
-    //     if(!flag) {
-    //         LL cnt=0;
-    //         Fo(i,1,n+1) {
-    //             if(i==q) continue;
-    //             w[++cnt]=a[i][n+1]/a[i][cnt];
-    //             if(w[cnt]<=0) {
-    //                 flag = true;
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     // Ms(vis,0);
-    //     // Fo(i,1,n) {
-    //     //     vis[w[i]]++;
-    //     //     if(vis[w[i]]>1) {
-    //     //         flag = true;
-    //     //         break;
-    //     //     }
-    //     // }
-    //     if(flag==false)
-    //         cout<<"*"<<q<<endl;
-    //     Fo(i,1,n)
-    //         cout<<w[i]<<" ";
-    //     cout<<endl;
-    //     // return 0;
-    // }
-    // LL minidx=1;
-    // Fo(i,2,n) {
-    //     if(w[i]>w[minidx])
-    //         minidx = i;
-    // }
-    // cout<<minidx;
     return 0;
 }
