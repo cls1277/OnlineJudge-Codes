@@ -11,30 +11,37 @@ typedef long long LL;
 #define rs x<<1|1
 #define endl '\n'
 
-const LL maxn = 1e5+5;
-LL n, m, mw, k;
+const LL maxn = 2e5+5;
+LL n, m;
 struct Node {
     LL a, b, c;
-};
-Node e[maxn<<1];
-LL color[maxn], ans, fa[maxn], cnt;
+}e[maxn];
+LL wm, k;
 
-LL find(LL x) {
-    while(x!=fa[x]) x=fa[x]=fa[fa[x]];
-    return x;
-}
+LL dfn[maxn], low[maxn], idx, cnt, color[maxn];
+bool ins[maxn];//是否在栈里
+stack<LL>st;
 
-void dfs(LL x, LL f, vector<LL> g[], LL c) {
-    for(int i=0; i<g[x].size(); i++) {
-        LL v=g[x][i], m=find(v);
-        if(v==f||color[v]) continue;
-        if(color[v]&&color[v]==color[x]) {
-            cout<<"-1";
-            exit(0);
+void tarjan(LL x, vector<LL>g[]) {
+    dfn[x] = low[x] = ++idx;
+    st.push(x); ins[x] = 1;
+    for(LL i=0; i<g[x].size(); i++) {
+        LL v=g[x][i];
+        if(!dfn[v]) {
+            tarjan(v, g);
+            low[x] = min(low[x],low[v]);
+        } else if(ins[v]) {
+            low[x] = min(low[x],dfn[v]);
         }
-        color[v] = 3-c;
-        color[m] = 3-c;
-        dfs(v,x,g,3-c);
+    }
+    if(dfn[x]==low[x]) {
+        cnt++; LL temp;
+        do {
+            temp = st.top();
+            ins[temp] = 0;
+            color[temp] = cnt;
+            st.pop();
+        }while(temp!=x);
     }
 }
 
@@ -47,73 +54,43 @@ int main() {
     cin>>n>>m;
     Fo(i,1,m) {
         LL x, y, z; cin>>x>>y>>z;
-        e[i] = {x,y,z};
-        mw = max(mw , z);
+        e[i] = {x, y, z};
+        wm = max(wm, z);
     }
-    while(mw) {
+    while(wm) {
         k++;
-        mw>>=1;
+        wm>>=1;
     }
     Fo(i,0,k-1) {
-        Fo(j,1,n) fa[j]=j;
+        Ms(dfn, 0); idx=0; Ms(low, 0); Ms(ins, 0);
+        while(st.size()) st.pop();
         vector<LL>g[maxn];
         Fo(j,1,m) {
-            LL w=(e[j].c>>i)&1;
-            if(w==1) {
-                g[e[j].a].push_back(e[j].b);
-                g[e[j].b].push_back(e[j].a);
+            LL w=(e[j].c>>i)&1, x=e[j].a, y=e[j].b;
+            if(w) {
+                g[x].push_back(y+n);
+                g[y].push_back(x+n);
+                g[x+n].push_back(y);
+                g[y+n].push_back(x);
             } else {
-                LL p=find(e[j].a), q=find(e[j].b);
-                if(p!=q) fa[p]=q;
+                g[x].push_back(y);
+                g[x+n].push_back(y+n);
+                g[y].push_back(x);
+                g[y+n].push_back(x+n);
             }
         }
-
-        LL sum1 = 0, sum2 = 0;
-        Ms(color,0);
-        LL o = 1;
-        Fo(j,1,n)
-            if(!color[j]) {
-                color[j] = 1;
-                dfs(j,j,g,1);
-                Fo(r,1,n) {
-                    LL t=find(r);
-                    if(!color[t]) continue;
-                    color[r] = color[t];
-                }
-            }
-
-        Fo(j,1,n)
-            if(color[j]==2)
-                sum1++;
-        
-        // LL temp[maxn];
-        // Fo(j,1,n) temp[j]=color[j];
-
-       Ms(color,0); o=2;
-        Fo(j,1,n)
-            if(!color[j]) {
-                color[j] = 2;
-                dfs(j,j,g,o);
-
-                Fo(r,1,n) {
-                    LL t=find(r);
-                    if(!color[t]) continue;
-                    color[r] = color[t];
-                }
-            }
-        Fo(j,1,n)
-            if(color[j]==2)
-                sum2++;
-        if(sum2>sum1) {
-            ans+=sum1*(1<<i);
-            // Fo(j,1,n) cout<<temp[j]-1<<" ";
-        }
-        else {
-            ans+=sum2*(1<<i);
-            // Fo(j,1,n) cout<<color[j]-1<<" ";
-        }
-        // cout<<endl;
+        Fo(j,1,2*n)
+            if(!dfn[j])
+                tarjan(j, g);
+        // Fo(j,1,n) {
+        //     if(color[j]==color[j+n]) {
+        //         cout<<"-1";
+        //         return 0;
+        //     }
+            
+        // }
+        Fo(j,1,n) cout<<color[j]<<" "<<color[j+n]<<endl;
+        return 0;
     }
-    cout<<ans;
     return 0;
 }

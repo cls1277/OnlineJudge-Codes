@@ -1,4 +1,6 @@
 /temp/
 *.exe
+*.in
+*.out
 .vscode
 tempCodeRunnerFile.cpp

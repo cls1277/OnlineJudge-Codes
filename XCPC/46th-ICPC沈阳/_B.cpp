@@ -32,9 +32,16 @@ void add(LL x, LL y, LL z) {
     head[x] = tot;
 }
 
+LL sz, fa[maxn];
+
+LL find(LL x) {
+    while(x!=fa[x]) x=fa[x]=fa[fa[x]];
+    return x;
+}
+
 LL bfs(LL x) {
-    LL hed=0, tail=-1;
-    q[++tail]=make_pair(x,x);
+    LL hed=0, tail=-1; sz=0;
+    q[++tail]=make_pair(x,x); sz++;
     while(tail>=hed) {
         pair<LL,LL>u=q[hed];
         hed++;
@@ -48,10 +55,10 @@ LL bfs(LL x) {
             if(color[v]) continue;
             if(w==1) {
                 color[v]=3-color[u.first];
-                q[++tail] = make_pair(v,u.first);
+                q[++tail] = make_pair(v,u.first); sz++;
             } else {
                 color[v]=color[u.first];
-                q[++tail] = make_pair(v,u.first);               
+                q[++tail] = make_pair(v,u.first); sz++;         
             }
         }
     }
@@ -75,34 +82,42 @@ int main() {
         mw>>=1;
     }
     Fo(i,0,k-1) {
-        LL sum1=0, sum2=0;
+        Fo(j,1,n) fa[j]=j;
         tot=0; Ms(head,0); Ms(g,0);
         Fo(j,1,m) {
             LL w=(e[j].c>>i)&1;
-            add(e[j].a,e[j].b,w);
-            add(e[j].b,e[j].a,w);
-        }
-        Ms(color,0);
-        Fo(j,1,n) {
-            if(!color[j]) {
-                color[j] = 1;
-                sum1 = bfs(j);
-                if(sum1==-1) {
+            LL p=find(e[j].a), q=find(e[j].b);
+            if(w) {
+                if(p==q) {
                     cout<<"-1";
                     return 0;
                 }
+            } else fa[p] = q;
+        }
+        Fo(j,1,m) {
+            LL w=(e[j].c>>i)&1;
+            LL p=find(e[j].a), q=find(e[j].b);
+            if(p!=q&&w) {
+                add(p, q, w);
+                add(q, p, w);
             }
         }
-        Fo(j,1,n) if(color[j]==2) sum1++;            
         Ms(color,0);
+        LL pre = 0;
         Fo(j,1,n) {
-            if(!color[j]) {
-                color[j] = 2;
-                bfs(j);
+            if(find(j)!=j) continue;
+            if(color[j]) continue;
+            LL sum = 0;
+            color[j] = 1;
+            sum = bfs(j);
+            if(sum==-1) {
+                cout<<"-1";
+                return 0;
             }
+            Fo(k,1,n) if(color[k]==2) sum++;
+            ans+=min(sum-pre,sz-sum+pre)*(1<<i);
+            pre = sum;
         }
-        Fo(j,1,n) if(color[j]==2) sum2++;            
-        ans+=min(sum1,sum2)*(1<<i);
     }
     cout<<ans;
     return 0;

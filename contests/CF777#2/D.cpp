@@ -59,6 +59,10 @@ bool miller_rabin(LL x) {
     return true;
 }
 
+LL gcd(LL x, LL y) {
+    return y?gcd(y, x%y):x;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -67,17 +71,18 @@ int main() {
     #endif
     LL t; cin>>t;
     while(t--) {
-        LL a,b; cin>>a>>b;
-        LL x=0;
-        while(a%b==0) {
-            x++;
-            a/=b;
-        }
-        if(x==1) {
+        LL x,d; cin>>x>>d;
+        LL k=x/d;
+        if(gcd(k, d)==1) {
             cout<<"NO"<<endl;
             continue;
         }
-        if()
+        LL k1k2 = k/d;
+        if(miller_rabin(k1k2)) {
+            cout<<"NO"<<endl;
+        } else {
+            cout<<"YES"<<endl;
+        }
     }
     return 0;
 }
