@@ -3,5 +3,5 @@
 *.in
 *.out
 .vscode
-*.data
+data.txt
 tempCodeRunnerFile.cpp
