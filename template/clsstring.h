@@ -64,7 +64,7 @@ void nxt(string s, int t[]) {
     }
 }
 
-void KMP(string s1, string s2, int t[]) {
+void KMP(string s1, string s2) {
     int x[s2.length()+5], p1=0, p2=0;
     nxt(s2, x);
     while(p1<s1.length()) {
