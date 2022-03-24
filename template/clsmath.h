@@ -19,6 +19,8 @@ typedef long double LD;
 typedef long long LL;
 typedef unsigned long long ULL;
 
+#define INF 2147483647
+
 #define M 2
 struct Mat {
     int a[M][M];
@@ -102,6 +104,17 @@ void getphi(int maxx, int phi[]) {
     }
 }
 
+LL getonephi(LL x, LL mod) {
+    LL temp = x;
+    for(int i=2; i<=sqrt(x); i++) {
+        if(x%i) continue;
+        temp = temp-temp/i;
+        while(x%i==0) x/=i;
+    }
+    if(x!=1) temp=temp-temp/x;
+    return temp%mod;
+}
+
 void getmu(int maxx, int mu[]) {
     bool vis[maxn]; int cnt=0, pri[maxn];
     memset(vis, 0, sizeof(vis));
@@ -129,7 +142,7 @@ inline ULL qmul(ULL a, ULL b, const ULL mod){
     return c<0? c+mod:(c<mod? c:c-mod);
 }
 
-inline LL qpow(LL a, LL b, LL mod) {
+inline LL qpow(LL a, LL b, LL mod = 19260817) {
     LL res = 1;
     while(b) {
         if(b&1)
@@ -221,7 +234,7 @@ LL exgcd(LL a, LL b, LL &x, LL &y) {
     return d;
 }
 
-//卡常gcd
+//卡常gcd stein算法 去掉了取模 加快了速度
 inline int ctz(LL x) { return __builtin_ctzll(x); }
 LL fast_gcd(LL a, LL b) {
     if(!a) return b; if(!b) return a;
@@ -451,4 +464,40 @@ void divide_block(LL n) {
         else r=n;
         //根据题目要求在[l,r]内进行对应操作
     }
+}
+
+//旋转染色polya n个点n种颜色，莫比乌斯反演后
+LL polya_rotate(LL n, LL mod) {
+    LL res = 0;
+    for(LL i=1; i<=sqrt(n); i++) {
+        if(n%i) continue;
+        res = (res+qpow(n, i, mod)*getonephi(n/i, mod)%mod)%mod;
+        if(i*i!=n) res=(res+qpow(n, n/i, mod)*getonephi(i, mod)%mod)%mod;
+    }
+    return res*qpow(n, mod-2, mod)%mod;
+}
+
+//翻转染色polya n个结点，m种颜色
+LL polya_roll(LL n, LL m) {
+    LL ans = 0;
+    if(n&1) ans = n*qpow(m, (n+1)/2);
+    else {
+        ans = n/2*qpow(m, n/2);
+        ans = n/2*qpow(m, n/2+1);
+    }
+    ans/=n;
+    return ans;
+}
+
+//旋转+翻转染色 polya n个结点 m种颜色
+LL polya_roll_rotate(LL n, LL m) {
+    LL ans = 0;
+    for(int i=1; i<=n; i++) ans+=qpow(m, gcd(i, n));
+    if(n&1) ans = n*qpow(m, (n+1)/2);
+    else {
+        ans = n/2*qpow(m, n/2);
+        ans = n/2*qpow(m, n/2+1);
+    }
+    ans/=2*n;
+    return ans;
 }
