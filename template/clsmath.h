@@ -21,31 +21,35 @@ typedef unsigned long long ULL;
 
 #define INF 2147483647
 
+/*
+    数组不要放到函数里太大！！！！
+*/
+
 #define M 2
 struct Mat {
-    int a[M][M];
+    LL a[M][M];
     Mat() {
         memset(a, 0, sizeof(a));
     }
     void eye() {
-        for(int i=0; i<M; i++) a[i][i] = 1;
+        for(LL i=0; i<M; i++) a[i][i] = 1;
     }
     Mat operator * (Mat &b) {
         Mat res;
-        for(int i=0; i<M; i++)
-            for(int j=0; j<M; j++)
-                for(int k=0; k<M; k++)
+        for(LL i=0; i<M; i++)
+            for(LL j=0; j<M; j++)
+                for(LL k=0; k<M; k++)
                     res.a[i][j] += this->a[i][k]*b.a[k][j];
         return res;
     }
     Mat operator + (Mat &b) {
         Mat res;
-        for(int i=0; i<M; i++)
-            for(int j=0; j<M; j++)
+        for(LL i=0; i<M; i++)
+            for(LL j=0; j<M; j++)
                 res.a[i][j] = this->a[i][j]+b.a[i][j];
         return res;
     }
-    Mat pow(int b) {
+    Mat pow(LL b) {
         Mat res , a=*this;
         res.eye();        
         while(b) {
@@ -56,9 +60,9 @@ struct Mat {
         }
         return res;
     }
-    void print() {
-        for(int i=0; i<M; i++) {
-            for(int j=0; j<M; j++)
+    void prLL() {
+        for(LL i=0; i<M; i++) {
+            for(LL j=0; j<M; j++)
                 cout<<a[i][j]<<" ";
             cout<<'\n';
         }
@@ -69,13 +73,13 @@ LL gcd(LL x, LL y) {
     return y?gcd(y, x%y):x;
 }
 
-const int maxn = 1e3+5;
-void getprime(int maxx, int pri[]) {
-    bool vis[maxn]; int cnt=0;
+const LL maxn = 1e3+5;
+void getprime(LL maxx, LL pri[]) {
+    bool vis[maxn]; LL cnt=0;
     memset(vis, 0, sizeof(vis));
-    for(int i=2; i<=maxx; i++) {
+    for(LL i=2; i<=maxx; i++) {
         if(!vis[i]) pri[cnt++]=i;
-        for(int j=0; j<cnt; j++) {
+        for(LL j=0; j<cnt; j++) {
             if(i*pri[j]>maxx) break;
             vis[i*pri[j]] = 1;
             if(i%pri[j]==0) break;
@@ -83,15 +87,16 @@ void getprime(int maxx, int pri[]) {
     }
 }
 
-void getphi(int maxx, int phi[]) {
-    bool vis[maxn]; int cnt=0, pri[maxn];
+void getphi(LL maxx, LL phi[]) {
+    bool vis[maxn]; LL cnt=0, pri[maxn];
     memset(vis, 0, sizeof(vis));
-    for(int i=2; i<=maxx; i++) {
+    phi[1] = 1;
+    for(LL i=2; i<=maxx; i++) {
         if(!vis[i]) {
             pri[cnt++] = i;
             phi[i] = i-1;
         }
-        for(int j=0; j<cnt; j++) {
+        for(LL j=0; j<cnt; j++) {
             if(i*pri[j]>maxx) break;
             vis[i*pri[j]] = 1;
             if(i%pri[j]==0) {
@@ -106,7 +111,7 @@ void getphi(int maxx, int phi[]) {
 
 LL getonephi(LL x, LL mod) {
     LL temp = x;
-    for(int i=2; i<=sqrt(x); i++) {
+    for(LL i=2; i<=sqrt(x); i++) {
         if(x%i) continue;
         temp = temp-temp/i;
         while(x%i==0) x/=i;
@@ -115,16 +120,16 @@ LL getonephi(LL x, LL mod) {
     return temp%mod;
 }
 
-void getmu(int maxx, int mu[]) {
-    bool vis[maxn]; int cnt=0, pri[maxn];
+void getmu(LL maxx, LL mu[]) {
+    bool vis[maxn]; LL cnt=0, pri[maxn];
     memset(vis, 0, sizeof(vis));
     mu[1] = 1;
-    for(int i=2; i<=maxx; i++) {
+    for(LL i=2; i<=maxx; i++) {
         if(!vis[i]) {
             mu[i] = -1;
             pri[cnt++] = i;
         }
-        for(int j=0; j<cnt; j++) {
+        for(LL j=0; j<cnt; j++) {
             if(i*pri[j]>maxx) break;
             vis[i*pri[j]] = 1;
             if(i%pri[j])
@@ -157,11 +162,11 @@ bool miller_rabin(LL x) {
     if(x==2) return true;
     if(x<2||x%2==0) return false;
     LL A[12]={2,3,5,7,11,13,17,19,23,29,31,37}, sz=11;
-    //int范围内只需检查2,7,61
+    //LL范围内只需检查2,7,61
     //long long范围2,325,9375,28178,450775,9780504,1795265022
     //3E15内2,2570940,880937,610386380,4130785767
     //4E13内2,2570940,211991001,3749873356
-    for(int i=0; i<=sz; i++)
+    for(LL i=0; i<=sz; i++)
         if(x==A[i])
             return true;
     LL m=x-1, k=0;
@@ -169,10 +174,10 @@ bool miller_rabin(LL x) {
         k++;
         m>>=1;
     }
-    for(int i=0; i<=sz; i++) {
+    for(LL i=0; i<=sz; i++) {
         LL y = qpow(A[i],m,x), z;
         z = y;
-        for(int j=1; j<=k; j++) {
+        for(LL j=1; j<=k; j++) {
             y = qmul(y,y,x);
             if(y==1&&z!=1&&z!=x-1)
                 return false;
@@ -235,10 +240,10 @@ LL exgcd(LL a, LL b, LL &x, LL &y) {
 }
 
 //卡常gcd stein算法 去掉了取模 加快了速度
-inline int ctz(LL x) { return __builtin_ctzll(x); }
+inline LL ctz(LL x) { return __builtin_ctzll(x); }
 LL fast_gcd(LL a, LL b) {
     if(!a) return b; if(!b) return a;
-    int t = ctz(a | b);
+    LL t = ctz(a | b);
     a >>= ctz(a);
     do {
         b >>= ctz(b);
@@ -256,7 +261,7 @@ LL inv1(LL x , LL y) {
 
 void inv2(LL n , LL mod) {
     inv[1] = 1;
-    for(int i=2; i<=n; i++)
+    for(LL i=2; i<=n; i++)
         inv[i] = (mod-mod/i)%mod*inv[mod%i]%mod;
 }
 
@@ -264,10 +269,10 @@ void inv2(LL n , LL mod) {
 LL frac[maxn];
 void inv3(LL n , LL mod) {
     frac[0] = 1;
-    for(int i=1; i<=n; i++)
+    for(LL i=1; i<=n; i++)
         frac[i] = frac[i-1]*i%mod;
     inv[n] = qpow(frac[n],mod-2,mod);
-    for(int i=n-1; i>=0; i--)
+    for(LL i=n-1; i>=0; i--)
         inv[i] = inv[i+1]*(i+1)%mod;
 }
 
@@ -279,7 +284,7 @@ LL inv4(LL n, LL mod) {
 
 LL C(LL n, LL m, LL mod) {
     LL res=1;
-    for(int i=1; i<=m; i++)
+    for(LL i=1; i<=m; i++)
         res=res*(n-m+i)%mod*qpow(i,mod-2,mod)%mod;
     return res;
 }
@@ -293,36 +298,36 @@ LL lucas(LL n , LL m , LL mod) {
 const double eps = 1e-10;
 LL mat[maxn][maxn];
 //第n+1列是y值，第i个变量的值为mat[i][n+1]/mat[i][i]
-bool gauss(int n) {
-    for(int i=1; i<=n; i++) {
+bool gauss(LL n) {
+    for(LL i=1; i<=n; i++) {
         LL maxrow=i;
-        for(int j=i+1; j<=n; j++)
+        for(LL j=i+1; j<=n; j++)
             if(mat[j][i]>mat[maxrow][i])
                 maxrow = j;
         if(fabs(mat[maxrow][i])<=eps) return false;
-        for(int j=1; j<=n+1; j++)
+        for(LL j=1; j<=n+1; j++)
             swap(mat[maxrow][j],mat[i][j]);
-        for(int j=1; j<=n; j++) {
+        for(LL j=1; j<=n; j++) {
             if(i==j) continue;
             double p=mat[j][i]/mat[i][i];
-            for(int k=i+1; k<=n+1; k++)
+            for(LL k=i+1; k<=n+1; k++)
                 mat[j][k]-=mat[i][k]*p;
         }
     }
     return true;
 }
 
-void init(LL n, int phi[], bool exi[], bool vis[]) {
+void init(LL n, LL phi[], bool exi[], bool vis[]) {
     //预处理exi和vis为0
-    for(int i=1; i<=n; i++) exi[i]=vis[i]=0;
-    int pri[maxn]; LL cnt = 0;
+    for(LL i=1; i<=n; i++) exi[i]=vis[i]=0;
+    LL pri[maxn]; LL cnt = 0;
     phi[1]=1;
-    for(int i=2; i<=n; i++) {
+    for(LL i=2; i<=n; i++) {
         if(!vis[i]) {
             pri[cnt++] = i;
             phi[i] = i-1;
         }
-        for(int j=0; j<cnt; j++) {
+        for(LL j=0; j<cnt; j++) {
             if(i*pri[j]>n) break;
             vis[i*pri[j]] = 1;
             if(i%pri[j]==0) {
@@ -334,7 +339,7 @@ void init(LL n, int phi[], bool exi[], bool vis[]) {
         }
     }
     exi[2]=exi[4]=1;
-    for(int i=1; i<cnt; i++) {
+    for(LL i=1; i<cnt; i++) {
         LL p=pri[i];
         for(LL q=p; q<=n; q*=p) {
             exi[q] = 1;
@@ -349,7 +354,7 @@ void primitive_root(LL n, LL phi[], bool exi[], vector<LL>root) {
     if(!exi[n]) return ;
     LL tempn=n; n=phi[n];
     vector<LL>facts;
-    for(int i=1; i<=sqrt(n); i++) {
+    for(LL i=1; i<=sqrt(n); i++) {
         if(n%i==0) {
             facts.push_back(i);
             if(i!=n/i)
@@ -371,7 +376,7 @@ void primitive_root(LL n, LL phi[], bool exi[], vector<LL>root) {
         if(is) break;
     }
     LL tempi=i, p=i;
-    for(int i=1; i<=n; i++) {
+    for(LL i=1; i<=n; i++) {
         if(gcd(i,n)==1)
             root.push_back(p);
         p=p*tempi%tempn;
@@ -429,7 +434,7 @@ LL quad_residue(LL n, LL p) {
 //以下代码用qmul卡常
 LL CRT(LL f[], LL m[], LL n, LL _M) {
     LL ans = 0;
-    for(int i=1; i<=n; i++) {
+    for(LL i=1; i<=n; i++) {
         LL Mi=_M/m[i], inv, z;
         exgcd(Mi, m[i], inv, z);
         ans = (ans+qmul(qmul(Mi, inv, _M), f[i], _M))%_M;
@@ -442,13 +447,13 @@ LL bsgs(LL a, LL b, LL p) {
     LL t=sqrt(p)+1;
     map<LL,LL>mp;
     LL m=b%p;
-    for(int i=0; i<t; i++) {
+    for(LL i=0; i<t; i++) {
         mp[m]=i+1;
         m=m*a%p;
     }
     LL temp=qpow(a,t,p);
     m=temp;
-    for(int i=1; i<=t; i++) {
+    for(LL i=1; i<=t; i++) {
         if(mp[m])
             return i*t-mp[m]+1;
         m=m*temp%p;
@@ -492,7 +497,7 @@ LL polya_roll(LL n, LL m) {
 //旋转+翻转染色 polya n个结点 m种颜色
 LL polya_roll_rotate(LL n, LL m) {
     LL ans = 0;
-    for(int i=1; i<=n; i++) ans+=qpow(m, gcd(i, n));
+    for(LL i=1; i<=n; i++) ans+=qpow(m, gcd(i, n));
     if(n&1) ans = n*qpow(m, (n+1)/2);
     else {
         ans = n/2*qpow(m, n/2);
