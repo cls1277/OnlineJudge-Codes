@@ -418,3 +418,31 @@ LL topo() {
     }
     return ans;
 }
+
+void prim() {
+    struct Node {
+        LL to , next , val;
+        bool operator < (const Node &a) const {
+            return val>a.val;
+        } 
+    };
+    Node e[maxn<<1];
+    priority_queue<Node>q;
+    LL ans = 0;
+	dis[1] = 0; cnt = 0;
+    memset(vis, 0, sizeof(vis));
+	q.push(Node{1 , 1 , 0});
+	while(!q.empty()&&cnt<n) {
+		Node u = q.top();
+		q.pop();
+		if(vis[u.to]) continue;
+		vis[u.to] = 1;
+		ans+=u.val;
+		cnt++;
+		for(int i=head[u.to]; i; i=e[i].next)
+			if(dis[e[i].to]>e[i].val) {
+				dis[e[i].to] = e[i].val;
+				q.push(Node{e[i].to , e[i].to , e[i].val});
+			}
+	}
+}

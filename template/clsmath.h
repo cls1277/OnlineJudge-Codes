@@ -323,6 +323,8 @@ bool gauss(LL n) {
     return true;
 }
 
+//原根
+
 void init(LL n, LL phi[], bool exi[], bool vis[]) {
     //预处理exi和vis为0
     for(LL i=1; i<=n; i++) exi[i]=vis[i]=0;
@@ -389,6 +391,7 @@ void primitive_root(LL n, LL phi[], bool exi[], vector<LL>root) {
     }
 }
 
+//二次剩余：
 //给定N,p 求解x^2同余N(mod p)
 //此处的mod与下面的p都是模数
 //quad_n = n ，quad_a是找到的满足a^2-n是二次非剩余的a，quad_a = a
@@ -449,6 +452,7 @@ LL CRT(LL f[], LL m[], LL n, LL _M) {
 }
 
 //a^x=b mod p，给定a,b,p 求最小非负x
+//a p互质
 LL bsgs(LL a, LL b, LL p) {
     LL t=sqrt(p)+1;
     map<LL,LL>mp;
@@ -467,7 +471,25 @@ LL bsgs(LL a, LL b, LL p) {
     return -1;//无解
 }
 
-//f(i)=floor(n/i)=t的取值范围是[l,r]
+//a^x=b mod p，给定a,b,p 求最小非负x
+//a p不互质
+LL exbsgs(LL a, LL b, LL p) {
+    if(b==1||p==1) return 0;
+    LL d,cnt=0,ai=1;
+    while((d=gcd(a,p))>1) {
+        if(b%d) return -1;
+        b/=d; p/=d; ai=(ai*a/d)%p; cnt++;
+        if(b==ai) return cnt;
+    }
+    LL x,y;
+    exgcd(ai,p,x,y);
+    LL inv=(x+p)%p;
+    LL res=bsgs(a,b*inv%p,p);
+    if(res==-1) return -1;
+    return res+cnt;
+}
+
+//数论分块：f(i)=floor(n/i)=t的取值范围是[l,r]
 void divide_block(LL n) {
     for(LL l=1,r; l<=n; l=r+1) {
         LL t=n/l;
@@ -565,6 +587,8 @@ struct Complex {
 */
 
 #define cp complex<LD>
+
+//高精度乘法时一定要逆序存储
 
 void fft(cp a[], LL n, LL inv) {
     LL r[maxn];//记得放到外面

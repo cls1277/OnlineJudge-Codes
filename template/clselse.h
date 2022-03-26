@@ -31,7 +31,7 @@ inline LL read() {
 	return x * f;
 }
 
-// const LL maxn = ;
+const LL maxn = 1e3+5;
 
 /*
 int main() {
@@ -67,4 +67,27 @@ int binary_search_2(int l, int r) {
         else r = mid-1;
     }
     return l;
+}
+
+LL n;
+
+//三分
+double func(double x, double a[]) {
+    double ans = 0;
+    for(int i=0; i<=n; i++) ans += a[i]*pow(x , n-i);
+    return ans;
+}
+
+void three_divide() {
+    double a[maxn], l, r, midl, midr;
+    for(int i=0; i<=n; i++) cin>>a[i];
+    while(fabs(r-l)>=eps) {
+        midl = (l+r)/2;
+        midr = (midl+r)/2;
+        if(func(midl, a)<func(midr, a))//func是具体的函数表达式
+            l = midl;
+        else
+            r = midr;
+    }
+    cout<<l;//最终答案存在l里
 }
