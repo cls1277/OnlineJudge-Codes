@@ -4,6 +4,12 @@
 #include<cmath>
 #include<vector>
 #include<map>
+#include<unordered_map>
+
+//复数库 可能会慢
+#include<complex>
+
+using std::cin;
 using std::cout;
 using std::memset;
 using std::abs;
@@ -14,16 +20,16 @@ using std::vector;
 using std::sqrt;
 using std::rand;
 using std::map;
+using std::unordered_map;
+using std::complex;
+using std::acos;
 
 typedef long double LD;
 typedef long long LL;
 typedef unsigned long long ULL;
 
 #define INF 2147483647
-
-/*
-    数组不要放到函数里太大！！！！
-*/
+#define PI acos(-1)
 
 #define M 2
 struct Mat {
@@ -295,7 +301,7 @@ LL lucas(LL n , LL m , LL mod) {
     return C(n%mod,m%mod,mod)*lucas(n/mod,m/mod,mod)%mod;
 }
 
-const double eps = 1e-10;
+const LD eps = 1e-10;
 LL mat[maxn][maxn];
 //第n+1列是y值，第i个变量的值为mat[i][n+1]/mat[i][i]
 bool gauss(LL n) {
@@ -309,7 +315,7 @@ bool gauss(LL n) {
             swap(mat[maxrow][j],mat[i][j]);
         for(LL j=1; j<=n; j++) {
             if(i==j) continue;
-            double p=mat[j][i]/mat[i][i];
+            LD p=mat[j][i]/mat[i][i];
             for(LL k=i+1; k<=n+1; k++)
                 mat[j][k]-=mat[i][k]*p;
         }
@@ -505,4 +511,139 @@ LL polya_roll_rotate(LL n, LL m) {
     }
     ans/=2*n;
     return ans;
+}
+
+//杜教筛sum
+//大概预处理到n^(2/3)
+
+LL maxx = INF;//输入的最大数
+#define N pow(maxx, (2/3))
+unordered_map<LL,LL>hashmu;
+unordered_map<LL,LL>hashphi;
+
+LL summu(LL n) {
+    // if(n<=N) return mu[n]; //预处理莫比乌斯函数的前N项和，直接输出
+    if(hashmu[n]) return hashmu[n];
+    LL res = 1;
+    for(LL i=2,j; i<=n; i=j+1) {
+        j=n/(n/i);
+        res -= summu(n/i)*(j-i+1);
+    }
+    return hashmu[n]=res;
+}
+
+LL sumphi(LL n) {
+    // if(n<=N) return phi[n]; //预处理欧拉函数的前N项和，直接输出
+    if(hashphi[n]) return hashphi[n];
+    LL res = n*(n+1)/2;
+    for(LL i=2,j; i<=n; i=j+1) {
+        j = n/(n/i);
+        res -= 1LL*sumphi(n/i)*(j-i+1);
+    }
+    return hashphi[n] = res;
+}
+
+//下面的代码是调用complex库的FFT写法
+//注释掉的是自己写的复数结构体的FFT写法
+/*
+struct Complex {
+	LD x , y;
+	Complex(LD xx=0 , LD yy=0) {
+		x=xx , y=yy;
+	}
+	Complex operator + (Complex a) {
+		return Complex(x+a.x,y+a.y);
+	}
+	Complex operator - (Complex a) {
+		return Complex(x-a.x,y-a.y);
+	}
+	Complex operator * (Complex a) {
+		return Complex(x*a.x-y*a.y,x*a.y+y*a.x);
+	}
+}; 
+#define cp Complex
+*/
+
+#define cp complex<LD>
+
+void fft(cp a[], LL n, LL inv) {
+    LL r[maxn];//记得放到外面
+    LL bit=1; while((1<<bit)<n) bit++;
+    for(LL i=0; i<n; i++) {
+        r[i] = (r[i>>1]>>1) | ((i&1)<<(bit-1));
+        if(i<r[i]) swap(a[i], a[r[i]]);
+    }
+    for(LL mid=1; mid<n; mid<<=1) {
+        cp wi(cos(PI/mid), inv*sin(PI/mid));
+        for(LL i=0; i<n; i+=mid<<1) {
+            cp wn(1,0);
+            for(LL j=0; j<mid; j++,wn=wn*wi) {
+                cp x=a[i+j], y=wn*a[i+j+mid];
+                a[i+j]=x+y, a[i+j+mid]=x-y;
+            }
+        }
+    }
+}
+
+//g是模数的原根
+//通常意义下，模数是998244353
+#define g 3
+
+void ntt(LL a[], LL n, LL inv) {
+    LL r[maxn];//记得放到外面
+    LL bit=1; while((1<<bit)<n) bit++;
+    for(LL i=0; i<n; i++) {
+        r[i] = (r[i>>1]>>1) | ((i&1)<<(bit-1));
+        if(i<r[i]) swap(a[i], a[r[i]]);
+    }
+    for(LL mid=1; mid<n; mid<<=1) {
+        LL gi=qpow(g, (mod-1)/(mid<<1), mod);
+        if(inv==-1) gi=qpow(gi, mod-2, mod);
+        for(LL i=0; i<n; i+=mid<<1) {
+            LL gn = 1;
+            for(LL j=0; j<mid; j++,gn=gn*gi) {
+                LL x=a[i+j], y=gn*a[i+j+mid]%mod;
+                a[i+j]=(x+y)%mod; a[i+j+mid]=(x-y+mod)%mod;
+            }
+        }
+    }    
+}
+
+LL invert(LL x) {
+    LL bit = 1;
+    while((1<<bit)<x) bit++;
+    return (1<<bit);
+}
+
+void fft_init() {
+    LL n, m, t; cp a[maxn], b[maxn];//记得放到外面
+    cin>>n>>m; t=invert(n+m);
+    // for(int i=0; i<=n; i++) cin>>a[i].x;
+    // for(int i=0; i<=m; i++) cin>>b[i].x;
+    for(int i=0; i<=n; i++) {
+        double x; cin>>x;
+        a[i].real(x);
+    }
+    for(int i=0; i<=m; i++) {
+        double x; cin>>x;
+        b[i].real(x);
+    }
+    fft(a, t, 1);
+    fft(b, t, 1);
+    for(int i=0; i<=t; i++) a[i]=a[i]*b[i];
+    fft(a, t, -1);
+    for(int i=0; i<=n+m; i++) cout<<(int)(a[i].real()/t+0.5)<<" ";
+    // for(int i=0; i<=n+m; i++) cout<<(int)(a[i].x/t+0.5)<<" ";
+}
+
+void ntt_init() {
+    LL n, m, t; LL a[maxn], b[maxn];
+    cin>>n>>m; t=invert(n+m);
+    for(int i=0; i<=n; i++) cin>>a[i];
+    for(int i=0; i<=m; i++) cin>>b[i];
+    ntt(a, t, 1);
+    ntt(b, t, 1);
+    for(int i=0; i<=t; i++) a[i]=a[i]*b[i]%mod;
+    ntt(a, t, -1);
+    for(int i=0; i<=n+m; i++) cout<<a[i]*qpow(t, mod-2, mod)%mod<<" ";
 }

@@ -2,6 +2,8 @@
 
 开太多long long容易T
 如果int相乘放到long long中，最好再乘1ll
+函数中的数组不要太大，不然容易内存过大而RE
+模板自带long long，如果需要的话，分析数据规模改一些为int
 
 */
 
