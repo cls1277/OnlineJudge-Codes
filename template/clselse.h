@@ -72,22 +72,21 @@ int binary_search_2(int l, int r) {
 LL n;
 
 //三分
-double func(double x, double a[]) {
-    double ans = 0;
-    for(int i=0; i<=n; i++) ans += a[i]*pow(x , n-i);
-    return ans;
+double func(LL k) {
+    //具体的函数形式
+    // return (k*n+m)/(1-qpow(1-p, k));
 }
 
-void three_divide() {
-    double a[maxn], l, r, midl, midr;
-    for(int i=0; i<=n; i++) cin>>a[i];
-    while(fabs(r-l)>=eps) {
-        midl = (l+r)/2;
-        midr = (midl+r)/2;
-        if(func(midl, a)<func(midr, a))//func是具体的函数表达式
-            l = midl;
-        else
-            r = midr;
+double three_divide() {
+    // double res = (n+m)/p;
+    double res = INF;//可能的最值（此处为最小值）
+    LL l=1, r=1000000;
+    while(r-l+1>=10) {
+        LL mid1=(l*2+r)/3, mid2=(l+r*2)/3;
+        double f1=func(mid1), f2=func(mid2);
+        res = min({res, f1, f2});
+        if(f1<f2) r=mid2; else l=mid1;
     }
-    cout<<l;//最终答案存在l里
+    for(int i=l; i<=r; i++)  res=min(res, func(i));
+    return res;
 }
