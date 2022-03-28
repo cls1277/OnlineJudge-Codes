@@ -13,6 +13,10 @@ using namespace std;
 typedef long long LL;
 #define PI acos(-1)
 #define INF 2147483647
+
+//上面这个可以写成
+#define INF INT_MAX
+
 #define eps 1e-7
 #define Fo(i,a,b) for(LL i=(a); i<=(b); i++)
 #define Ro(i,b,a) for(LL i=(b); i>=(a); i--)
