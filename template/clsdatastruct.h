@@ -14,6 +14,9 @@ typedef long long LL;
 
 const LL maxn = 1e3+5;
 
+#define ls x<<1
+#define rs x<<1|1
+
 //线段树相关
 
 struct Seg {
