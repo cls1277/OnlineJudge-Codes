@@ -114,10 +114,6 @@ LL st_query(LL l , LL r) {
 
 struct Que {
     LL ops , num;
-    Que(){}
-    Que(LL oo , LL nn) {
-        ops=oo , num=nn;
-    }
 };
 deque<Que>q1;
 deque<Que>q2;
@@ -128,12 +124,12 @@ void solo_queue() {
         cin>>m;
         while(!q1.empty()&&m>=q1.back().num)
             q1.pop_back();
-        q1.push_back(Que(i,m));
+        q1.push_back({i,m});
         while(i-k+1>q1.front().ops)
             q1.pop_front();
         while(!q2.empty()&&m<=q2.back().num)
             q2.pop_back();
-        q2.push_back(Que(i,m));
+        q2.push_back({i,m});
         while(i-k+1>q2.front().ops)
             q2.pop_front();
         if(i>=k) {
