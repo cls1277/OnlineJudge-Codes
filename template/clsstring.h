@@ -65,7 +65,7 @@ void nxt(string s, int t[]) {
     int p1=0, p2=-1;
     t[0] = -1;
     while(p1<s.length()) {
-        if(p2==-1 || s[p1]==s[p1])
+        if(p2==-1 || s[p1]==s[p2])
             t[++p1] = ++p2;
         else p2 = t[p2];
     }
