@@ -8,6 +8,21 @@ memset() 不要带全部，用多少清空多少，还要看不清空是否《�
 
 */
 
+//对拍程序
+/*
+
+@echo off  
+:loop  
+    rand.exe>data.txt  
+    my.exe<data.txt>my.out  
+    std.exe<data.txt>std.out  
+    fc my.out std.out  
+if not errorlevel 1 goto loop  
+pause  
+goto loop
+
+*/
+
 //By cls1277
 #include<bits/stdc++.h>
 using namespace std;
