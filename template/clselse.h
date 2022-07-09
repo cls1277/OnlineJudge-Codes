@@ -69,6 +69,7 @@ bool judge(int x) {
     //写二分的判断
 }
 
+// 整数域中>>1比/2要好！
 // 模板1：找满足某个条件的第一个数  即右半段
 int binary_search_1(int l, int r) {
     while(l<r) {
@@ -89,9 +90,32 @@ int binary_search_2(int l, int r) {
     return l;
 }
 
+// 模板3：实数域上的二分
+double binary_search_3(double l, double r) {
+    // 防止与上文eps冲突，加了下划线结尾
+    // 保留k位小数时，eps=10^{-k-2}
+    const double eps_ = 1e-5;
+    while(l + eps_ < r) {
+        double mid = (l+r)/2;
+        if(judge(mid)) r = mid;
+        else l = mid;
+    }
+    return l;
+}
+
+// 模板4：精度难以控制的二分
+double binary_search_4(double l, double r) {
+    for(int i=0; i<100; i++) {
+        double mid = (l+r)/2;
+        if(judge(mid)) r= mid;
+        else l = mid;
+    }
+    return l;
+}
+
 LL n;
 
-//三分
+//三分：单峰函数有唯一的极值点，严格单调！
 double func(LL k) {
     //具体的函数形式
     // return (k*n+m)/(1-qpow(1-p, k));

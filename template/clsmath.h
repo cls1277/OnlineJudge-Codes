@@ -153,6 +153,17 @@ inline ULL qmul(ULL a, ULL b, const ULL mod){
     return c<0? c+mod:(c<mod? c:c-mod);
 }
 
+// qmul的另一种写法
+inline LL qmul2(LL a, LL b, LL p) {
+    LL ans = 0;
+    while(b) {
+        if(b&1) ans = (ans+a)%p;
+        a = a*2%p;
+        b>>=1;
+    }
+    return ans;
+}
+
 inline LL qpow(LL a, LL b, LL mod = 19260817) {
     LL res = 1;
     while(b) {
