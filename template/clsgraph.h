@@ -57,14 +57,14 @@ void dfs(LL u, LL f, LL w) {
 LL lca(LL x, LL y) {
     LL ans = INF;
     if(deep[x]<deep[y]) swap(x,y);
-    for(int i=20; i; i--) {
+    for(int i=20; i>=0; i--) {
         if(deep[fa[x][i]]>=deep[y]) {
             ans = min(ans, wt[x][i]);
             x = fa[x][i];
         }
         if(x==y) return ans;
     }
-    for(int i=20; i; i--) {
+    for(int i=20; i>=0; i--) {
         if(fa[x][i]!=fa[y][i]) {
             ans = min(ans, wt[x][i]);
             ans = min(ans, wt[y][i]);

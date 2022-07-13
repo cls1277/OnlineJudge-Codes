@@ -45,27 +45,34 @@ int main() {
     #endif
     LL t; cin>>t;
     while(t--) {
+        map<LL, LL> ops;
         Ms(vis, 0);
         Ms(head, 0);
         tot = 0;
         cin>>n;
+        bool flag = 1;
         Fo(i,1,n) {
             LL x, y; cin>>x>>y;
+            ops[x]++; ops[y]++;
+            if(x==y||ops[x]>2||ops[y]>2) {
+                flag = 0;
+            }
             add(x, y);
             add(y, x);
         }
-        bool flag = 1;
-        Fo(i,1,n)
-            if(!vis[i]) {
-                cnt = 1;
-                vis[i] = 1;
-                op = 0;
-                dfs(i, i);
-                if(cnt&1||!op) flag = 0;
-                if(!flag) {
-                    break;
+        if(flag) {
+            Fo(i,1,n)
+                if(!vis[i]) {
+                    cnt = 1;
+                    vis[i] = 1;
+                    op = 0;
+                    dfs(i, i);
+                    if(cnt&1||!op) flag = 0;
+                    if(!flag) {
+                        break;
+                    }
                 }
-            }
+        }
         if(flag) cout<<"YES"<<endl;
         else cout<<"NO"<<endl;
     }

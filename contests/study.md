@@ -7,3 +7,10 @@ remove_if：[https://blog.csdn.net/KFLING/article/details/80187847](https://blog
 min_element和max_element：[https://blog.csdn.net/cocoasprite/article/details/81039753](https://blog.csdn.net/cocoasprite/article/details/81039753)
 
 tuple元组：[https://blog.csdn.net/sevenjoin/article/details/88420885](https://blog.csdn.net/sevenjoin/article/details/88420885)
+
+emplace_back：[https://blog.csdn.net/Messi_31/article/details/98444744](https://blog.csdn.net/Messi_31/article/details/98444744)
+
+stoi：https://cplusplus.com/reference/string/stoi/
+
+rbegin和rend：https://blog.csdn.net/u013271656/article/details/113560304
+
