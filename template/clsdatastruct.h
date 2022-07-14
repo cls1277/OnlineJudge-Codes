@@ -139,3 +139,64 @@ void solo_queue() {
         }
     }
 }
+
+// 树状数组
+// https://blog.csdn.net/bestsort/article/details/80796531
+// 注意下标是从1开始的
+
+#define lowbit(_) _&(-_)
+LL c[maxn];
+
+// 单点更新 区间查询
+void update(LL x , LL y) {
+	while(x<=n) {
+		c[x]+=y;
+		x+=lowbit(x);
+	}
+}
+
+LL sum(LL x) {
+	if(x<=0) return 0;
+	LL ans = 0;
+	while(x) {
+		ans+=c[x];
+		x-=lowbit(x);
+	}
+	return ans;
+}
+
+/*
+逆序对
+Fo(i,1,n) {
+	update(a[i], 1);
+	res += i-sum(a[i]);
+}
+*/
+
+// 区间更新
+void rangeUpdate(LL l, LL r, LL x) {
+    update(l, x);
+    update(r+1, -x);
+}
+
+// 二维树状数组
+LL nx, ny, bit[maxn][maxn];
+
+void update(LL x, LL y, LL z) {
+    for(int i=x; i<=nx; i+=lowbit(i))
+        for(int j=y; j<=ny; j+=lowbit(j))
+            bit[i][j] += z;
+}
+
+LL sum(LL x, LL y) {
+    LL res = 0;
+    for(int i=x; i>0; i-=lowbit(i))
+        for(int j=y; j>0; j-=lowbit(j))
+            res +=bit[i][j];
+    return res;
+}
+
+// (a,b)和(c,d)之间二维矩阵和
+LL ask(LL a, LL  b, LL c, LL d) {
+    return sum(c, d)-sum(a-1, d)-sum(c, b-1)+sum(a-1, b-1);
+}
