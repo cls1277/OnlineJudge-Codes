@@ -16,3 +16,7 @@ rbegin和rend：https://blog.csdn.net/u013271656/article/details/113560304
 
 树状数组：https://blog.csdn.net/bestsort/article/details/80796531
 
+LCA - tarjan：https://blog.csdn.net/li1615882553/article/details/79762771
+
+LCA - RMQ：https://blog.csdn.net/weixin_44035017/article/details/99480717
+

@@ -1,24 +1,11 @@
-//By cls1277 , learn from ECNU
-#include<iostream>
-#include<cmath>
-#include<cstring>
-#include<queue>
-#include<stack>
-#include<vector>
-#include<algorithm>
-
-using std::cout;
-using std::swap;
-using std::memset;
-using std::queue;
-using std::min;
-using std::max;
-using std::stack;
-using std::vector;
-using std::priority_queue;
+//By cls1277
+#include<bits/stdc++.h>
+using namespace std;
 
 typedef long long LL;
-#define INF 2147483647
+#define Fo(i,a,b) for(LL i=(a); i<=(b); i++)
+#define Ro(i,b,a) for(LL i=(b); i>=(a); i--)
+#define Eo(i,x,_) for(LL i=head[x]; i; i=_[i].next)
 
 const int maxn = 1e3+5;
 
@@ -30,7 +17,7 @@ struct Edge {
 LL tot, head[maxn];
 LL n;//n是点的个数
 
-void add(LL x, LL y, LL z) {
+void add(LL x, LL y, LL z=0) {
     tot++;
     e[tot].next = head[x];
     e[tot].to = y;
@@ -55,7 +42,7 @@ void dfs(LL u, LL f, LL w) {
 }
 
 LL lca(LL x, LL y) {
-    LL ans = INF;
+    LL ans = INT_MAX;
     if(deep[x]<deep[y]) swap(x,y);
     for(int i=20; i>=0; i--) {
         if(deep[fa[x][i]]>=deep[y]) {
@@ -81,7 +68,7 @@ void lca_init(LL n) {
     for(int i=1; i<=n; i++) {
         if(!vis[i]) {
             vis[i] = 1;
-            dfs(i,0,INF);
+            dfs(i,0,INT_MAX);
         }
     }
     for(int i=1; i<=20; i++) {
@@ -92,6 +79,142 @@ void lca_init(LL n) {
     }
 }
 
+// 无边权的LCA
+LL lca(LL x, LL y) {
+    if(deep[x]<deep[y]) swap(x,y);
+    for(int i=20; i>=0; i--) {
+        if(deep[fa[x][i]]>=deep[y]) {
+            x = fa[x][i];
+        }
+        if(x==y) return x;
+    }
+    for(int i=20; i>=0; i--) {
+        if(fa[x][i]!=fa[y][i]) {
+            x = fa[x][i];
+            y = fa[y][i];
+        }
+    }
+    return fa[x][0];
+}
+
+void lca_init() {
+    for(int i=1; i<=n; i++) {
+        if(!vis[i]) {
+            vis[i] = 1;
+            dfs(i,0,INT_MAX);
+        }
+    }
+    for(int i=1; i<=20; i++) {
+        for(int j=1; j<=n; j++) {
+            fa[j][i] = fa[fa[j][i-1]][i-1];
+        }
+    }
+}
+
+// LCA tarjan做法
+
+// 并查集，将fa改为pa
+
+LL pa[maxn], ans[maxn];
+map<LL, vector<pair<LL, LL>>> q;
+
+LL find(LL x) {
+    while(x!=pa[x]) {
+        x = pa[x] = pa[pa[x]];
+    }
+    return x;
+}
+
+void Union(LL x, LL y) {
+    LL fx=find(x), fy=find(y);
+    pa[fx] = fy;
+}
+
+void lca_tarjan(LL x, LL f) {
+    Eo(i, x, e) {
+        LL v = e[i].to;
+        if(v==f) continue;
+        lca_tarjan(v, x);
+        Union(v, x);
+    }
+    vis[x] = 1;
+    for(auto it:q[x]) {
+        if(vis[it.second]) {
+//            cout<<x<<' '<<it.second<<' '<<find(it.second)<<endl;
+            ans[it.first] = find(it.second);
+        }
+    }
+}
+
+void lca_tarjan_main() {
+    LL m; cin>>m; //m次查询
+    Fo(i,1,m) {
+        LL a, b; cin>>a>>b;
+        q[a].push_back({i, b});
+        q[b].push_back({i, a});
+    }
+    lca_tarjan(s, s); //s为树的根，可以看题目给不给，或者通过入度判断
+    Fo(i,1,m) cout<<ans[i]<<endl;
+}
+
+// LCA RMQ做法
+
+LL first[maxn];
+pair<LL, LL> stb[maxn][25]; //first:deep, second:id
+vector<pair<LL, LL>> a; //表
+
+pair<LL, LL> calc(pair<LL, LL> x, pair<LL, LL> y) {
+    if(x.first < y.first) return x;
+    return y;
+}
+
+void lca_rmq(LL x, LL f) {
+    first[x] = cnt;
+    // a.push_back({deep[x], x}); cnt++;
+    bool flag = 0;
+    Eo(i, x, e) {
+        LL v = e[i].to;
+        if(v==f) continue;
+        flag = 1;
+        deep[v] = deep[x]+1;
+        a.push_back({deep[v], v}); cnt++;
+        lca_rmq(v, x);
+        a.push_back({deep[x], x}); cnt++;
+    }
+    if(flag) {
+        a.push_back({deep[x], x});
+        cnt++;
+    }
+}
+
+void lca_rmq_main() {
+    cin>>n>>m>>s;
+    Fo(i,2,n) {
+        LL x, y; cin>>x>>y;
+        add(x, y);
+        add(y, x);
+    }
+    cnt = 1;
+    deep[s] = 1;
+    a.push_back({1, s});
+    lca_rmq(s, s);
+    Fo(i,1,cnt) {
+        stb[i][0] = a[i-1];
+    }
+    Fo(j,1,21) {
+        Fo(i,1,cnt) {
+            stb[i][j] = calc(stb[i][j-1], stb[i+(1<<(j-1))][j-1]);
+        }
+    }
+    Fo(i,1,m) {
+        LL a, b; cin>>a>>b;
+        LL l=first[a], r=first[b];
+        if(l>r) swap(l, r);
+        LL k = LL(log(r-l+1)/log(2));
+        cout<<calc(stb[l][k], stb[r-(1<<k)+1][k]).second<<endl;
+    }
+}
+
 LL dis[maxn], pre[maxn];
 
 bool dinic_bfs(LL n) {
@@ -99,7 +222,7 @@ bool dinic_bfs(LL n) {
     vis[1]=1;
     queue<LL>q;
     q.push(1);
-    dis[1]=INF;
+    dis[1]=INT_MAX;
     while(!q.empty()) {
         LL u=q.front();
         if(u==n) return 1;
@@ -152,7 +275,7 @@ bool mcmf_spfa() {
     memset(vis, 0, sizeof(vis));
     memset(val, 0xfffffff, sizeof(val));
     val[s]=0;
-    vis[s]=1; dis[s]=INF;
+    vis[s]=1; dis[s]=INT_MAX;
     queue<LL>q;
     q.push(s);
     while(!q.empty()) {
@@ -353,7 +476,7 @@ bool operator < (Que a , Que b) {
 }
 
 void dij(LL s) {
-    for(int i=1; i<=n; i++) dis[i]=INF;
+    for(int i=1; i<=n; i++) dis[i]=INT_MAX;
 	dis[s] = 0;
 	priority_queue<Que>q;
 	q.push({0,s});
@@ -372,7 +495,7 @@ void dij(LL s) {
 }
 
 void spfa(LL s) {
-	for(int i=1; i<=n; i++) dis[i]=INF;
+	for(int i=1; i<=n; i++) dis[i]=INT_MAX;
 	queue<LL>q;
 	dis[s] = 0;
 	vis[s] = 1;

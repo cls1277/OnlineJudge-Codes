@@ -28,7 +28,6 @@ typedef long double LD;
 typedef long long LL;
 typedef unsigned long long ULL;
 
-#define INF 2147483647
 #define PI acos(-1)
 
 #define M 2
@@ -549,7 +548,7 @@ LL polya_roll_rotate(LL n, LL m) {
 //杜教筛sum
 //大概预处理到n^(2/3)
 
-LL maxx = INF;//输入的最大数
+LL maxx = INT_MAX;//输入的最大数
 #define N pow(maxx, (2/3))
 unordered_map<LL,LL>hashmu;
 unordered_map<LL,LL>hashphi;
