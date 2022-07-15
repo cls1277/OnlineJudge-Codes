@@ -6,6 +6,10 @@ typedef long long LL;
 #define Fo(i,a,b) for(LL i=(a); i<=(b); i++)
 #define Ro(i,b,a) for(LL i=(b); i>=(a); i--)
 #define Eo(i,x,_) for(LL i=head[x]; i; i=_[i].next)
+#define Fo(i,a,b) for(LL i=(a); i<=(b); i++)
+#define Ro(i,b,a) for(LL i=(b); i>=(a); i--)
+#define Eo(i,x,_) for(LL i=head[x]; i; i=_[i].next)
+#define Ms(a,b) memset((a),(b),sizeof(a))
 
 const int maxn = 1e3+5;
 
@@ -115,7 +119,7 @@ void lca_init() {
 
 // 并查集，将fa改为pa
 
-LL pa[maxn], ans[maxn];
+LL pa[maxn], lca_ans[maxn];
 map<LL, vector<pair<LL, LL>>> q;
 
 LL find(LL x) {
@@ -141,7 +145,7 @@ void lca_tarjan(LL x, LL f) {
     for(auto it:q[x]) {
         if(vis[it.second]) {
 //            cout<<x<<' '<<it.second<<' '<<find(it.second)<<endl;
-            ans[it.first] = find(it.second);
+            lca_ans[it.first] = find(it.second);
         }
     }
 }
@@ -154,7 +158,7 @@ void lca_tarjan_main() {
         q[b].push_back({i, a});
     }
     lca_tarjan(s, s); //s为树的根，可以看题目给不给，或者通过入度判断
-    Fo(i,1,m) cout<<ans[i]<<endl;
+    Fo(i,1,m) cout<<lca_ans[i]<<endl;
 }
 
 // LCA RMQ做法
@@ -215,80 +219,155 @@ void lca_rmq_main() {
     }
 }
 
+// 最大流（最小割）
+
+LL minn, maxx; //最小费用，最大流
+LL s, t; //源点，汇点
+
+// EK算法
+LL mf_vis[maxn][maxn]; //应对重边的情况
 LL dis[maxn], pre[maxn];
 
-bool dinic_bfs(LL n) {
-    bool vis[maxn]; memset(vis, 0, sizeof(vis));
-    vis[1]=1;
-    queue<LL>q;
-    q.push(1);
-    dis[1]=INT_MAX;
+bool ek_bfs() {
+    Ms(vis, 0);
+    queue<LL> q;
+    q.push(s);
+    vis[s] = 1;
+    dis[s] = INT_MAX;
     while(!q.empty()) {
-        LL u=q.front();
-        if(u==n) return 1;
-        q.pop();
-        for(int i=head[u]; i; i=e[i].next) {
-            LL v=e[i].to;
-            if(e[i].len<=0||vis[v]) continue;
+        LL u = q.front(); q.pop();
+        if(u==t) return 1;
+        Eo(i,u,e) {
+            LL v = e[i].to;
+            if(vis[v]||e[i].val<=0) continue;
+            dis[v] = min(dis[u], e[i].val);
             vis[v] = 1;
+            pre[v] = i; // 存的i
             q.push(v);
-            pre[v] = i;
-            dis[v] = min(dis[u] , e[i].len);
         }
     }
     return 0;
 }
 
-void dinic_dfs(LL n, LL &ans) {
-    LL x=n;
-    while(x!=1) {
-        LL p=pre[x];
-        e[p].len-=dis[n];
-        e[p^1].len+=dis[n];
-        x=e[p^1].to;
+void ek_update() {
+    LL x = t;
+    while(x!=s) {
+        LL i = pre[x];
+        e[i].val  -= dis[t];
+        e[i^1].val += dis[t];
+        x = e[i^1].to;
     }
-    ans+=dis[n];
-    return ;
+    maxx += dis[t];
 }
 
-//tot一定要等于1
-void dinic_init(LL n) {
-    LL ans = 0;
+void ek_main() {
+    cin>>n>>m>>s>>t;
     tot = 1;
-    /*
-        //给点x和点y之间加一条流量为z的边：
-        add(x, y, z);
-        add(y, x, 0);
-    */
-   while(dinic_bfs(n)) {
-       dinic_dfs(n, ans);
-   }
+    Fo(i,1,m) {
+        LL x, y, z; cin>>x>>y>>z;
+        if(!mf_vis[x][y]) {
+            add(x, y, z);
+            mf_vis[x][y] = tot;
+            add(y, x, 0);
+        } else {
+            e[mf_vis[x][y]].val += z;
+        }
+
+    }
+    while(ek_bfs()) ek_update();
+    cout<<maxx;
 }
 
-//val是花费数组，mc最小费用，mf最大流量
-//s源点，t汇点
-LL mc, mf, val[maxn], s, t;
+// dinic算法
 
-bool mcmf_spfa() {
-    bool flag=false;
-    bool vis[maxn];
-    memset(vis, 0, sizeof(vis));
-    memset(val, 0xfffffff, sizeof(val));
-    val[s]=0;
-    vis[s]=1; dis[s]=INT_MAX;
-    queue<LL>q;
+bool dinic_bfs() {
+    Ms(vis, 0);
+    queue<LL> q;
     q.push(s);
+    vis[s] = 1;
+    deep[s]  = 1;
     while(!q.empty()) {
-        LL u=q.front();
-        q.pop();
-        if(u==t) flag=true;
+        LL u = q.front(); q.pop();
+        if(u==t) return 1;
+        Eo(i,u,e) {
+            LL v = e[i].to;
+            if(vis[v]||e[i].val<=0) continue;
+            vis[v] = 1;
+            deep[v] = deep[u] + 1;
+            q.push(v);
+        }
+    }
+    return 0;
+}
+
+LL dinic_dfs(LL x, LL dis) {
+    if(x==t) return dis;
+    LL rest = dis;
+    Eo(i,x,e) {
+        LL v = e[i].to;
+        if(!e[i].val || deep[v]!=deep[x]+1) continue;
+        LL k = dinic_dfs(v, min(rest, e[i].val));
+        if(!k) deep[v] = -1;
+        e[i].val -= k;
+        e[i^1].val += k;
+        rest -= k;
+    }
+    return dis-rest;
+}
+
+void dinic_main() {
+    cin>>n>>m>>s>>t;
+    tot = 1;
+    Fo(i,1,m) {
+        LL x, y, z; cin>>x>>y>>z;
+        if(!mf_vis[x][y]) {
+            add(x, y, z);
+            mf_vis[x][y] = tot;
+            add(y, x, 0);
+        } else {
+            e[mf_vis[x][y]].val += z;
+        }
+    }
+    while(dinic_bfs()) {
+        LL flow;
+        while(flow = dinic_dfs(s, INT_MAX)) {
+            maxx += flow;
+        }
+    }
+    cout<<maxx;
+}
+
+// 最小费用最大流
+
+// EK算法
+
+LL len[maxn]; //费用长度，含义为spfa中的dis数组
+
+// 重载add函数
+void add(LL x, LL y, LL z, LL w) {
+    tot++;
+    e[tot].next = head[x];
+    e[tot].to = y;
+    e[tot].val = z;
+    e[tot].len = w;
+    head[x] = tot;
+}
+
+bool ek_spfa() {
+    Ms(vis, 0); Ms(dis, 0x3f); Ms(len, 0x3f);
+    len[s] = 0; dis[s] = INT_MAX; vis[s] = 1;
+    queue<LL>q; q.push(s);
+    bool flag = 0;
+    while(!q.empty()) {
+        LL u = q.front(); q.pop();
+        if(u==t) flag = 1;
         vis[u] = 0;
-        for(int i=head[u]; i; i=e[i].next) {
-            LL v=e[i].to;
-            if(e[i].len>0&&val[v]>val[u]+e[i].val) {
-                val[v] = val[u]+e[i].val;
+        Eo(i,u,e) {
+            LL v = e[i].to;
+            if(e[i].val>0&&len[v]>len[u]+e[i].len) {
+                len[v] = len[u] + e[i].len;
                 pre[v] = i;
-                dis[v] = min(dis[u], e[i].len);
+                dis[v] = min(dis[u], e[i].val);
                 if(!vis[v]) {
                     vis[v] = 1;
                     q.push(v);
@@ -299,29 +378,93 @@ bool mcmf_spfa() {
     return flag;
 }
 
-void mcmf_dfs() {
-    LL x=t;
+void ek_mcmf_update() {
+    LL x = t;
     while(x!=s) {
-        LL p=pre[x];
-        e[p].len-=dis[t];
-        e[p^1].len+=dis[t];
-        x=e[p^1].to;
+        LL i = pre[x];
+        e[i].val -= dis[t];
+        e[i^1].val += dis[t];
+        x = e[i^1].to;
     }
-    mf += dis[t];
-    mc += dis[t]*val[t];
-    return ;
+    maxx += dis[t];
+    minn += dis[t]*len[t];
 }
 
-void mcmf_init() {
-    /*
-        //给点x和点y之间加一条流量为z花费为v的边：
-        add(x, y, z, v);
-        add(y, x, 0, -v);
-    */
-   while(mcmf_spfa()) {
-       mcmf_dfs();
-   }
+void ek_mcmf_main() {
+    cin>>n>>m>>s>>t;
+    tot = 1;
+    Fo(i,1,m) {
+        LL x, y, z, w; cin>>x>>y>>z>>w;
+        if(x==y) continue;
+        add(x, y, z, w);
+        add(y, x, 0, -w);
+    }
+    while(ek_spfa()) ek_mcmf_update();
+    cout<<maxx<<' '<<minn;
 }
+
+// dinic算法
+
+bool dinic_spfa() {
+    Ms(vis, 0); Ms(len, 0x3f);
+    vis[s] = 1; len[s] = 0;
+    queue<LL>q; q.push(s);
+    bool flag = 0;
+    while(!q.empty()) {
+        LL u = q.front(); q.pop();
+        if(u==t) flag = 1;
+        vis[u] = 0;
+        Eo(i,u,e) {
+            LL v = e[i].to;
+            if(e[i].val>0&&len[v]>len[u]+e[i].len) {
+                len[v] = len[u] + e[i].len;
+                if(!vis[v]) {
+                    vis[v] = 1;
+                    q.push(v);
+                }
+            }
+        }
+    }
+    return flag;
+}
+
+LL dinic_mcmf_dfs(LL x, LL dis) {
+    if(x==t) return dis;
+    LL rest = dis;
+    vis[x] = 1; //要有vis限制
+    Eo(i,x,e) {
+        LL v = e[i].to;
+        if(vis[v] || !e[i].val || len[v]!=len[x]+e[i].len) continue;
+        LL k = dinic_mcmf_dfs(v, min(rest, e[i].val));
+        if(!k) len[v] = -1;
+        e[i].val -= k;
+        e[i^1].val += k;
+        rest -= k;
+        minn += k*e[i].len;
+    }
+    vis[x] = 0;
+    return dis-rest;
+}
+
+void dinic_mcmf_main() {
+    cin>>n>>m>>s>>t;
+    tot = 1;
+    Fo(i,1,m) {
+        LL x, y, z, w; cin>>x>>y>>z>>w;
+        if(x==y) continue;
+        add(x, y, z, w);
+        add(y, x, 0, -w);
+    }
+    while(dinic_spfa()) {
+        LL flow;
+        while(flow = dinic_mcmf_dfs(s, INT_MAX)) {
+            maxx += flow;
+        }
+    }
+    cout<<maxx<<' '<<minn;
+}
+
+//二分图匹配
 
 //m一般是边的个数，匈牙利算法中是二分图右侧结点个数
 LL line[maxn][maxn], match[maxn], m;
