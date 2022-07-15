@@ -2,6 +2,7 @@
 *.in
 *.out
 .vscode
+.obsidian
 data.txt
 
 tempCodeRunnerFile.cpp

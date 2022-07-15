@@ -20,3 +20,6 @@ LCA - tarjan：https://blog.csdn.net/li1615882553/article/details/79762771
 
 LCA - RMQ：https://blog.csdn.net/weixin_44035017/article/details/99480717
 
+C语言取整方法总结：https://blog.51cto.com/u_15127620/3949209
+
+避免行末空格的写法：https://blog.csdn.net/qq_41743740/article/details/121707173
