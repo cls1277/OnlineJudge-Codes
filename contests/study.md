@@ -10,16 +10,18 @@ tuple元组：[https://blog.csdn.net/sevenjoin/article/details/88420885](https:/
 
 emplace_back：[https://blog.csdn.net/Messi_31/article/details/98444744](https://blog.csdn.net/Messi_31/article/details/98444744)
 
-stoi：https://cplusplus.com/reference/string/stoi/
+stoi：[https://cplusplus.com/reference/string/stoi/](https://cplusplus.com/reference/string/stoi/)
 
-rbegin和rend：https://blog.csdn.net/u013271656/article/details/113560304
+rbegin和rend：[https://blog.csdn.net/u013271656/article/details/113560304](https://blog.csdn.net/u013271656/article/details/113560304)
 
-树状数组：https://blog.csdn.net/bestsort/article/details/80796531
+树状数组：[https://blog.csdn.net/bestsort/article/details/80796531](https://blog.csdn.net/bestsort/article/details/80796531)
 
-LCA - tarjan：https://blog.csdn.net/li1615882553/article/details/79762771
+LCA - tarjan：[https://blog.csdn.net/li1615882553/article/details/79762771](https://blog.csdn.net/li1615882553/article/details/79762771)
 
-LCA - RMQ：https://blog.csdn.net/weixin_44035017/article/details/99480717
+LCA - RMQ：[https://blog.csdn.net/weixin_44035017/article/details/99480717](https://blog.csdn.net/weixin_44035017/article/details/99480717)
 
-C语言取整方法总结：https://blog.51cto.com/u_15127620/3949209
+C语言取整方法总结：[https://blog.51cto.com/u_15127620/3949209](https://blog.51cto.com/u_15127620/3949209)
 
-避免行末空格的写法：https://blog.csdn.net/qq_41743740/article/details/121707173
+避免行末空格的写法：[https://blog.csdn.net/qq_41743740/article/details/121707173](https://blog.csdn.net/qq_41743740/article/details/121707173)
+
+accumulate函数：[https://blog.csdn.net/VariatioZbw/article/details/125257536](https://blog.csdn.net/VariatioZbw/article/details/125257536)
