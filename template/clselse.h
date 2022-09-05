@@ -64,6 +64,17 @@ int main() {
 }
 */
 
+// 程序运行时间
+void calcRunTime() {
+    clock_t start, finish;
+    double totaltime;
+    start = clock();
+   
+    //...
+
+    finish = clock();
+    totaltime = (double)(finish-start)/CLOCKS_PER_SEC;
+}
 
 bool judge(int x) {
     //写二分的判断

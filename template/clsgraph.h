@@ -637,6 +637,8 @@ void dij(LL s) {
 	}
 }
 
+//spfa最短路
+
 void spfa(LL s) {
 	for(int i=1; i<=n; i++) dis[i]=INT_MAX;
 	queue<LL>q;
@@ -658,6 +660,36 @@ void spfa(LL s) {
 			} 
 		} 
 	}
+}
+
+//spfa求负环
+LL countt[maxn]; //代替cnt数组
+
+bool spfa_minus(LL s) {
+	queue<LL>q;
+    for(int i=1; i<=n; i++) {
+        dis[i] = INT_MAX; //可能会赋值0
+        countt[i] = vis[i] = 0;
+        q.push(i); //没有给起点的时候都要压进去，给了起点只需要压进起点
+    }
+	while(!q.empty()) {
+		LL u = q.front();
+		q.pop();
+		vis[u] = 0;
+		for(int i=head[u]; i; i=e[i].next) {
+			LL v = e[i].to;
+			if(dis[v]>dis[u]+e[i].len) {
+				dis[v] = dis[u]+e[i].len;
+				if(!vis[v]) {
+					vis[v] = 1;
+					q.push(v);
+                    countt[v] = countt[u]+1;
+                    if(countt[v]>=n) return 1;
+				}
+			} 
+		} 
+	}
+    return 0;
 }
 
 //sum[]存强连通分量的值

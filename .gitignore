@@ -1,6 +1,9 @@
 *.exe
 *.in
 *.out
+*.zip
+*.pdf
+*.pptx
 .vscode
 .obsidian
 data.txt
