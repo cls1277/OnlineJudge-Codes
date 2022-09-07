@@ -5,6 +5,7 @@
 函数中的数组不要太大，不然容易内存过大而RE
 模板自带long long，如果需要的话，分析数据规模改一些为int
 memset() 不要带全部，用多少清空多少，还要看不清空是否《肯定》没影响
+易错、讨论、卡常等：https://blog.csdn.net/WerKeyTom_FTD/article/details/50437196
 
 */
 
@@ -76,6 +77,9 @@ void calcRunTime() {
     totaltime = (double)(finish-start)/CLOCKS_PER_SEC;
 }
 
+// 卡常
+#pragma-GCC-optimize("-Ofast");
+
 bool judge(int x) {
     //写二分的判断
 }
@@ -144,4 +148,124 @@ double three_divide() {
     }
     for(int i=l; i<=r; i++)  res=min(res, func(i));
     return res;
+}
+
+// 枚举子集和超集
+// https://blog.nowcoder.net/n/0137de03367d497ca9e16b684c4e9c61
+void subset() {
+    LL S = 22, MAXN = 32;
+    for(int t=S; t; t=(t-1)&S) cout<<t<<' ';
+    cout<<endl;
+    for(int t=S; t<MAXN; t=(t+1)|S) cout<<t<<' ';
+}
+
+// 爬山算法
+struct climbHill {
+    static const double MAXN = 1e20;
+    LL n, _x[maxn], _y[maxn];
+    LL dx[4]={1,-1,0,0}, dy[4]={0,0,1,-1};
+
+    double getDis(double x, double y) {
+        double dis = 0;
+        Fo(i,1,n) dis+=sqrt((_x[i]-x)*(_x[i]-x)+(_y[i]-y)*(_y[i]-y));
+        return dis;
+    }
+
+    double climb() {
+        double x=rand()%10001, y=rand()%10001;
+        double dis = getDis(x, y);
+        double step = 10000;
+        while(step>0.001) {
+            double mn=MAXN, tx, ty;
+            Fo(i,0,3) {
+                double nx=x+dx[i]*step, ny=y+dy[i]*step;
+                double ndis = getDis(nx, ny);
+                if(ndis<mn) {
+                    mn = ndis;
+                    tx = nx;
+                    ty = ny;
+                }
+            }
+            if(mn<dis) {
+                dis = mn;
+                x = tx;
+                y = ty;
+            }
+            step*=0.5;
+        }
+        return dis;
+    }
+};
+
+// 模拟退火
+// 记得多迭代几次的时候要初始化
+// https://zhuanlan.zhihu.com/p/322278813
+struct SAA {
+    // 一些参数：Q:0.85~0.997, MAXN:2000~3000, eps:1e-12
+    static const double Q = 0.997;
+    const LL MAXN = 3000;
+    // static const double eps = 1e-12;
+
+    #define pdd pair<double, double>
+    LL n, _x[maxn], _y[maxn];
+    pdd ans, now;
+    double res = 1e20;
+
+    double getDis(double x, double y) {
+        double dis = 0;
+        Fo(i,1,n) dis+=sqrt((_x[i]-x)*(_x[i]-x)+(_y[i]-y)*(_y[i]-y));
+        return dis;
+    }
+
+    void saa() {
+        double t = MAXN;
+        while(t>eps) {
+            double x = now.first+((rand()<<1)-RAND_MAX)*t;
+            double y = now.second+((rand()<<1)-RAND_MAX)*t;
+            double dis = getDis(x, y);
+            double det = dis-res;
+            if(det<0) {
+                res = dis;
+                ans = now = {x, y};
+            } else if(exp(-det/t)*RAND_MAX > rand()) {
+                now = {x, y};
+            }
+            t*=Q;
+        }
+    }
+};
+
+// 基数排序
+void numSort() {
+    LL n; cin>>n;
+    vector<string> a(n+1);
+    LL mx = -1;
+    string str;
+    Fo(i,1,n) {
+        cin>>a[i];
+        LL num = (LL)atoi(a[i].c_str());
+        if(num > mx) {
+            mx = num;
+            str = a[i];
+        }
+    } 
+    for(int i=0; i<str.length(); i++) {
+        queue<string> b[11];
+        Fo(j,1,n) {
+        	auto it = a[j];
+            if(i>=it.length()) {
+                b[0].push(it);
+            } else {
+                b[it[it.length()-i-1]-'0'].push(it);
+            }
+        }
+        LL top = 0;
+        Fo(i,0,9) {
+            while(!b[i].empty()) {
+                a[++top] = b[i].front();
+                b[i].pop();
+            }
+        }
+    }
+    Fo(i,1,n) cout<<a[i]<<' ';
 }

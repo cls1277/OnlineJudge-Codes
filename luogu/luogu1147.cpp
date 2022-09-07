@@ -14,11 +14,22 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     #ifdef DEBUG
-    // freopen("data.txt","r",stdin);
+    freopen("data.txt","r",stdin);
     #endif
-    srand(time(NULL));
-    LL n = 10;
-    cout<<n<<endl;
-    Fo(i,1,n) cout<<rand()%2<<' ';
+    LL M; cin>>M;
+    LL p1=1, p2=2, sum=3;
+    while(p1<=M/2) {
+        if(sum==M) {
+            cout<<p1<<' '<<p2<<endl;
+            sum -= p1;
+            p1 ++;
+        } else if(sum<M) {
+            p2 ++;
+            sum += p2;
+        } else {
+            sum -= p1;
+            p1 ++;
+        }
+    }
     return 0;
 }
