@@ -19,27 +19,27 @@ typedef unsigned long long ULL;
 
 #define PI acos(-1)
 
-#define M 2
+#define _M 2
 struct Mat {
-    LL a[M][M];
+    LL a[_M][_M];
     Mat() {
         memset(a, 0, sizeof(a));
     }
     void eye() {
-        for(LL i=0; i<M; i++) a[i][i] = 1;
+        for(LL i=0; i<_M; i++) a[i][i] = 1;
     }
     Mat operator * (Mat &b) {
         Mat res;
-        for(LL i=0; i<M; i++)
-            for(LL j=0; j<M; j++)
-                for(LL k=0; k<M; k++)
+        for(LL i=0; i<_M; i++)
+            for(LL j=0; j<_M; j++)
+                for(LL k=0; k<_M; k++)
                     res.a[i][j] += this->a[i][k]*b.a[k][j];
         return res;
     }
     Mat operator + (Mat &b) {
         Mat res;
-        for(LL i=0; i<M; i++)
-            for(LL j=0; j<M; j++)
+        for(LL i=0; i<_M; i++)
+            for(LL j=0; j<_M; j++)
                 res.a[i][j] = this->a[i][j]+b.a[i][j];
         return res;
     }
@@ -55,8 +55,8 @@ struct Mat {
         return res;
     }
     void prLL() {
-        for(LL i=0; i<M; i++) {
-            for(LL j=0; j<M; j++)
+        for(LL i=0; i<_M; i++) {
+            for(LL j=0; j<_M; j++)
                 cout<<a[i][j]<<" ";
             cout<<'\n';
         }
@@ -103,7 +103,7 @@ void getphi(LL maxx, LL phi[]) {
     }
 }
 
-LL getonephi(LL x, LL mod) {
+LL getonephi(LL x) {
     LL temp = x;
     for(LL i=2; i<=sqrt(x); i++) {
         if(x%i) continue;
@@ -111,7 +111,7 @@ LL getonephi(LL x, LL mod) {
         while(x%i==0) x/=i;
     }
     if(x!=1) temp=temp-temp/x;
-    return temp%mod;
+    return temp;
 }
 
 void getmu(LL maxx, LL mu[]) {
@@ -144,7 +144,7 @@ inline ULL qmul(ULL a, ULL b, const ULL mod){
 // qmul的另一种写法
 inline LL qmul2(LL a, LL b, LL p) {
     LL ans = 0;
-    while(b) {
+    while(b>0) {
         if(b&1) ans = (ans+a)%p;
         a = a*2%p;
         b>>=1;
@@ -450,14 +450,14 @@ LL quad_residue(LL n, LL p) {
 //_M = m[i]的累乘
 //f[]:余数，m[]:模数
 //以下代码用qmul卡常
-LL CRT(LL f[], LL m[], LL n, LL _M) {
+LL CRT(LL f[], LL m[], LL n, LL M) {
     LL ans = 0;
     for(LL i=1; i<=n; i++) {
-        LL Mi=_M/m[i], inv, z;
+        LL Mi=M/m[i], inv, z;
         exgcd(Mi, m[i], inv, z);
-        ans = (ans+qmul(qmul(Mi, inv, _M), f[i], _M))%_M;
+        ans = (ans+qmul(qmul(Mi, inv, M), f[i], M))%M;
     }
-    return (ans+_M)%_M;
+    return (ans+M)%M;
 }
 
 //a^x=b mod p，给定a,b,p 求最小非负x
@@ -513,8 +513,8 @@ LL polya_rotate(LL n, LL mod) {
     LL res = 0;
     for(LL i=1; i<=sqrt(n); i++) {
         if(n%i) continue;
-        res = (res+qpow(n, i, mod)*getonephi(n/i, mod)%mod)%mod;
-        if(i*i!=n) res=(res+qpow(n, n/i, mod)*getonephi(i, mod)%mod)%mod;
+        res = (res+qpow(n, i, mod)*getonephi(n/i)%mod)%mod;
+        if(i*i!=n) res=(res+qpow(n, n/i, mod)*getonephi(i)%mod)%mod;
     }
     return res*qpow(n, mod-2, mod)%mod;
 }
@@ -1174,3 +1174,125 @@ Bigint &Bigint::div(Bigint &a, Bigint b, div_type typ)
 //     cout << a % b << endl;
 //     return 0;
 // }
+
+// 扩展欧拉定理：求a^b%m
+void exoula() {
+    LL a, b, m;
+    cin>>a>>m;
+	LL p = getonephi(m);
+	cin>>b;
+	if(b&&b<p) cout<<qpow(a, b, m);
+	else cout<<qpow(a, b%p+p, m);
+}
+
+// 扩展中国剩余定理
+// https://www.luogu.com.cn/blog/niiick/solution-p4777
+// https://blog.csdn.net/Xm_wy/article/details/115526285
+struct _exCRT {
+    static const LL maxn = 1e5+5;
+    LL n, m[maxn], a[maxn];
+    inline LL qmul(LL a, LL b, LL p) {
+        LL ans = 0;
+        while(b>0) {
+            if(b&1) ans = (ans+a)%p;
+            a = a*2%p;
+            b>>=1;
+        }
+        return ans;
+    }
+    LL exgcd(LL a, LL b, LL &x, LL &y) {
+        if(!b) {
+            x=1; y=0;
+            return a;
+        }
+        LL d=exgcd(b, a%b, x, y);
+        LL k = x; x = y;
+        y = k-a/b*y;
+        return d;
+    }
+    LL exCRT() {
+        LL M=m[1], ans=a[1];
+        Fo(i,2,n) {
+            LL x, y;
+            LL gcd = exgcd(M, m[i], x, y);
+            LL c = ((a[i]-ans)%m[i]+m[i])%m[i];
+            if(c%gcd) return -1;
+            LL d = m[i]/gcd;
+            x = qmul(x, c/gcd, d);
+            ans += x*M;
+            M *= d;
+            ans = (ans%M+M)%M;
+        }
+        return (ans%M+M)%M;
+    }
+};
+
+// 求行列式的值
+struct _det {
+    static const LL maxn = 605;
+    LL n, a[maxn][maxn], mod;
+    LL det() {
+        LL ans=1, w=1;
+        Fo(i,1,n) {
+            Fo(j,i+1,n) {
+                while(a[i][i]) {
+                    LL div = a[j][i]/a[i][i];
+                    Fo(k,i,n) a[j][k] = (a[j][k]-div*a[i][k]%mod+mod)%mod;
+                    swap(a[i], a[j]);
+                    w *= (-1);
+                }
+                swap(a[i], a[j]);
+                w *= (-1);
+            }
+        }
+        ans = w;
+        Fo(i,1,n) ans=ans*a[i][i]%mod;
+        return (ans%mod+mod)%mod;
+    }
+};
+
+// 线性基
+// https://www.luogu.com.cn/blog/szxkk/solution-p3812
+struct _LB {
+    static const LL maxn = 55;
+    static const LL maxm = 51;
+    LL n, a[maxn], p[maxn], cnt=0;
+    void insert() {
+        Fo(i,1,n) {
+            LL x = a[i];
+            Ro(j,maxm,0) {
+                if(x&(1LL<<j)) {
+                    if(!p[j]) {
+                        p[j] = x;
+                        // cnt++;
+                        break;
+                    } else {
+                        x^=p[j];
+                    }
+                }
+            }
+        }
+    }
+    bool insert(LL x) {
+        Ro(i,maxm,0) {
+            if(x&(1LL<<i)) {
+                if(!p[i]) {
+                    p[i] = x;
+                    return 1;
+                } else {
+                    x ^= p[i];
+                }
+            }
+        }
+        return 0;
+    }
+    LL maxXor() {
+        LL ans = 0;
+        Ro(i,maxm,0) {
+            if((ans^p[i])>ans) {
+                ans ^= p[i];
+            }
+        }
+        return ans;
+    }
+};

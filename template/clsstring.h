@@ -1,18 +1,14 @@
 //By cls1277
-#include<iostream>
-#include<unordered_map>
-#include<cstring>
-#include<queue>
-#include<cmath>
-#include<vector>
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+#define Fo(i,a,b) for(LL i=(a); i<=(b); i++)
+#define Ro(i,b,a) for(LL i=(b); i>=(a); i--)
+#define Eo(i,x,_) for(LL i=head[x]; i; i=_[i].next)
+#define Ms(a,b) memset((a),(b),sizeof(a))
+#define endl '\n'
 
-using std::cin;
-using std::unordered_map;
-using std::string;
-using std::queue;
-using std::max;
-using std::min;
-using std::vector;
+//const LL maxn = ;
 
 typedef long long LL;
 
