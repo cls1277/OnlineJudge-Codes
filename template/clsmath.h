@@ -297,11 +297,26 @@ LL inv4(LL n, LL mod) {
     return (x+mod)%mod;
 }
 
-LL C(LL n, LL m, LL mod) {
+LL C(LL n, LL m, LL mod=1e9+7) {
     LL res=1;
     for(LL i=1; i<=m; i++)
         res=res*(n-m+i)%mod*qpow(i,mod-2,mod)%mod;
     return res;
+}
+
+// 求组合数的另一种写法，用于求y不大情况
+LL C2(LL x, LL y) {
+    if(x<0||y<0||x<y) return 0;
+    if(x%mod==0||y==0) return 1;
+    LL res = 1;
+    Fo(i,x-y+1,x) res = (res*(i%mod))%mod;
+    Fo(i,1,y) res = (res*(inv[i]%mod))%mod;
+    return res;
+}
+
+// 此处的inv为阶乘逆元
+LL C3(LL x, LL y) {
+    return frac[x]*inv[y]%mod*inv[x-y]%mod;
 }
 
 //求C_{n+m}^n mod p的值
@@ -1296,3 +1311,53 @@ struct _LB {
         return ans;
     }
 };
+
+// 多重集组合数
+// https://blog.csdn.net/HenryYang2018/article/details/89469891
+struct _multiC {
+    LL n, s, a[maxn], ans;
+    void multiC() {
+        inv2(20, mod);
+        cin>>n>>s;
+        ans = C2(n+s-1, n-1);
+        Fo(i,1,n) cin>>a[i];
+        LL len = (1LL<<n)-1;
+        Fo(i,1,len) {
+            LL cnt=0, x=n+s;
+            Fo(j,0,n-1) {
+                if(i&(1<<j)) {
+                    cnt ++;
+                    x -= a[j+1]; 
+                }
+            }
+            x -= (cnt+1);
+            LL p = (cnt&1)?(-1):1;
+            ans = ((ans + p*C2(x, n-1)%mod)%mod+mod)%mod;
+        } 
+        cout<<(ans%mod+mod)%mod;
+    } 
+};
+
+// 期望的线性性
+// https://blog.csdn.net/coco56181712/article/details/77975421
+
+// 错排问题
+// https://blog.csdn.net/BaiJian12138/article/details/125884517
+struct _misSort {
+    void solve() {
+        LL n; cin>>n;
+        vector<LL> f(n+1);
+        f[1]=0; f[2]=1;
+        Fo(i,3,n) f[i]=(i-1)*(f[i-1]+f[i-2]);
+        cout<<f[n];
+    }
+};
+
+// 卡特兰数
+// https://blog.csdn.net/Cyril_KI/article/details/108412075
+
+// 斯特林数
+// https://blog.csdn.net/u011815404/article/details/80083954
+
+// 博弈论常见结论
+// https://blog.csdn.net/m0_54646258/article/details/125691111
